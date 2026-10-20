@@ -278,6 +278,14 @@ used. Upstream Zephyr only has the V3, so the board files live in
 for a 363 KB bundle), DFU of an nRF52 MeshCore repeater including the
 buttonless jump (~15 KB/s), and the battery reading against a bench supply.
 
+It also has a 128×64 OLED, which this build uses as a **status display**
+(`CONFIG_UPDATER_DISPLAY`, LVGL): one screen with the DFU state, target,
+bundle and a progress bar, one with battery, BLE client, bundle count and free
+space; **PRG** switches between them. The display only reads state, it never
+drives a run, and it blanks after 60 s of nothing changing
+(`CONFIG_UPDATER_DISPLAY_TIMEOUT_S`). Any board with a `zephyr,display` can
+enable it.
+
 Pushing an update for the wrong board over Bluetooth used to be a real foot-gun
 — MCUboot checks the signature, not the architecture. The firmware now reports
 its board target over `os_mgmt` and the web client refuses a mismatch, so this
