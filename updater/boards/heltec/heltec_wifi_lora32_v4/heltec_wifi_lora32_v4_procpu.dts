@@ -7,8 +7,12 @@
  *     quad flash, instead of the V3's ESP32-S3FN8.
  *   - USB-C goes straight to the S3's USB-Serial-JTAG (GPIO19/20, VID 303A),
  *     not through a CP2102, so the console is usb_serial rather than uart0.
- *   - Vext_Ctrl (GPIO36) and ADC_Ctrl (GPIO37) are active HIGH. The V3 has
- *     both active LOW; MeshCore's heltec_v4 variant drives them high.
+ *   - ADC_Ctrl (GPIO37) is active HIGH, as MeshCore's heltec_v4 variant
+ *     drives it (the V3 is active LOW).
+ *   - Vext_Ctrl (GPIO36) is still active LOW, as on the V3 - measured on a
+ *     V4.2: driven high, the SSD1306 does not ACK (-ETIMEDOUT); driven low it
+ *     comes up. MeshCore's heltec_v4 variant has PIN_VEXT_EN_ACTIVE=HIGH,
+ *     which does not match this board.
  *   - The LoRa path has a front-end module (GC1109 / KCT8103L) on GPIO7
  *     (LDO enable), GPIO2 (CSD) and GPIO46 (CPS). Not described here; the
  *     pins are left at their reset state, which keeps the FEM unpowered.
@@ -74,7 +78,7 @@
 
 	vext_ctrl: vext_ctrl {
 		compatible = "power-domain-gpio";
-		enable-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;	/* GPIO36 */
+		enable-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;	/* GPIO36 */
 		#power-domain-cells = <0>;
 		label = "Vext Control";
 	};
